@@ -37,12 +37,16 @@ async def send_btn(event):
     message = event.message
     logger.debug('ready to send btn')
     await event.reply('Pick one from this grid', buttons=[
-        # [Button.inline('Left'), Button.inline('Right')],
+        [Button.inline('Left'), Button.inline('Middle'), Button.inline('Right')],
         # [Button.url('Check this site!', 'https://lonamiwebs.github.io')],
-        Button.text('Thanks!', resize=True, single_use=True),
-        Button.request_phone('Send phone'),
-        Button.request_location('Send location'),
+        # [Button.text('Thanks!', resize=True, single_use=True)],
     ])
+
+
+@client.on(events.CallbackQuery)
+@logger.catch
+async def callback(event):
+    await event.edit('Thank you for clicking {}!'.format(event.data))
 
 
 if __name__ == '__main__':
