@@ -35,6 +35,8 @@ async def refresh_stats(cli: TelegramClient, gap=3):
             cache.sync()
             logger.debug('Message gone')
             continue
+        except MessageNotModifiedError:
+            continue
 
 
 @client.on(events.NewMessage)
