@@ -15,12 +15,10 @@ cache = shelve.open('db/cache')
 
 @logger.catch
 async def refresh_stats(cli: TelegramClient, gap=3):
-    last_msg_id = None
-    last_chat_id = None
+    last_chat_id, last_msg_id = None, None
     while True:
         await asyncio.sleep(gap)
-        msg_id = cache.get('msg_id')
-        chat_id = cache.get('chat_id')
+        chat_id, msg_id = cache.get('chat_id'), cache.get('msg_id')
         if chat_id is None:
             continue
         chat = await cli.get_input_entity(chat_id)
@@ -33,8 +31,7 @@ async def refresh_stats(cli: TelegramClient, gap=3):
         try:
             await client.edit_message(chat, msg_id, get_stats())
         except MessageIdInvalidError:
-            cache['msg_id'] = None
-            cache['chat_id'] = None
+            cache['chat_id'], cache['msg_id'] = None, None
             cache.sync()
             logger.debug('Message gone')
             continue
@@ -77,8 +74,7 @@ async def check_chat_id(event):
 @white_list_user_only({bot_owner, })
 async def report_here(event):
     msg = await event.reply("Waiting for worker")
-    cache['chat_id'] = event.chat_id
-    cache['msg_id'] = msg.id
+    cache['chat_id'], cache['msg_id'] = event.chat_id, msg.id
     cache.sync()
 
 
