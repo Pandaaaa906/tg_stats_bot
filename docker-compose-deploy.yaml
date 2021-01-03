@@ -3,7 +3,7 @@ version: "3"
 services:
   tg_bot:
     build: .
-    container_name: tg_bot
+    container_name: tg_stats_bot
     env_file:
       - .env
     volumes:
