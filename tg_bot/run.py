@@ -1,16 +1,42 @@
 import asyncio
+import shelve
 from asyncio import Event
 
 from loguru import logger
-from telethon import events
+from telethon import events, TelegramClient
 from telethon.errors import MessageIdInvalidError
-from telethon.tl.custom import Button
 from telethon.utils import get_display_name
 
 from settings import client, bot_owner
 from utils import start_up_msg, get_stats, white_list_user_only
 
-logger.add("/logs/tg_bot.log", rotation="1 week")
+logger.add("logs/tg_bot.log", rotation="1 week")
+cache = shelve.open('db/cache')
+
+
+@logger.catch
+async def refresh_stats(cli: TelegramClient, gap=3):
+    last_msg_id = None
+    while True:
+        await asyncio.sleep(gap)
+        msg_id = cache.get('msg_id')
+        chat_id = cache.get('chat_id')
+        if chat_id is None:
+            continue
+        chat = await cli.get_input_entity(chat_id)
+        if last_msg_id and last_msg_id != msg_id:
+            await client.delete_messages(chat, last_msg_id)
+        last_msg_id = msg_id
+        if msg_id is None:
+            continue
+        try:
+            await client.edit_message(chat, msg_id, get_stats())
+        except MessageIdInvalidError:
+            cache['msg_id'] = None
+            cache['chat_id'] = None
+            cache.sync()
+            logger.debug('Message gone')
+            continue
 
 
 @client.on(events.NewMessage)
@@ -44,46 +70,22 @@ async def check_chat_id(event):
         f'chat_title: {chat.title}'
     )
 
+
 exit_flag: bool = False
 ready_start = Event()
 ready_start.set()
 
 
-@client.on(events.NewMessage(pattern=r'^/report_here'))
+@client.on(events.NewMessage(pattern=r'^/report_here$'))
 @logger.catch
 @white_list_user_only({bot_owner, })
 async def report_here(event):
     global exit_flag
     exit_flag = True
     msg = await event.reply(get_stats())
-    await ready_start.wait()
-    exit_flag = False
-    ready_start.clear()
-    while not exit_flag:
-        await asyncio.sleep(3)
-        try:
-            await msg.edit(get_stats())
-        except MessageIdInvalidError:
-            logger.debug('Message gone')
-            return
-    else:
-        await msg.delete()
-        ready_start.set()
-
-
-@client.on(events.NewMessage(pattern='^/btn'))
-@logger.catch
-async def send_btn(event):
-    logger.debug('ready to send btn')
-    await event.reply('Pick one from this grid', buttons=[
-        [Button.inline('Left'), Button.inline('Middle'), Button.inline('Right')],
-    ])
-
-
-@client.on(events.CallbackQuery)
-@logger.catch
-async def callback(event):
-    await event.edit('Thank you for clicking {}!'.format(event.data))
+    cache['chat_id'] = event.chat_id
+    cache['msg_id'] = msg.id
+    cache.sync()
 
 
 if __name__ == '__main__':
@@ -91,4 +93,5 @@ if __name__ == '__main__':
     with client:
         logger.info("Connection Established")
         client.loop.run_until_complete(start_up_msg(client))
+        client.loop.create_task(refresh_stats(client))
         client.run_until_disconnected()

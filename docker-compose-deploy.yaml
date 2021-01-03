@@ -3,8 +3,11 @@ version: "3"
 services:
   tg_bot:
     build: .
+    container_name: tg_bot
     env_file:
-      - secret.env
+      - .env
     volumes:
-      - /www/tg_bot/logs:/logs
+      - /www/tg_bot/logs:/app/logs
+      - /www/tg_bot/db:/app/db
     command: python run.py
+    restart: unless-stopped

@@ -6,8 +6,8 @@ RUN pip install -r /tmp/requirements
 
 FROM tg_bot_base
 
-COPY tg_bot /tg_bot
-WORKDIR /tg_bot
+COPY tg_bot /app
+WORKDIR /app
 RUN mkdir -p session
-RUN mkdir -p /logs
+RUN mkdir -p db
 ENTRYPOINT [ "python", "run.py" ]
