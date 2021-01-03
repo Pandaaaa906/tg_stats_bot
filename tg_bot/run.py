@@ -17,6 +17,7 @@ cache = shelve.open('db/cache')
 @logger.catch
 async def refresh_stats(cli: TelegramClient, gap=3):
     last_msg_id = None
+    last_chat_id = None
     while True:
         await asyncio.sleep(gap)
         msg_id = cache.get('msg_id')
@@ -25,8 +26,9 @@ async def refresh_stats(cli: TelegramClient, gap=3):
             continue
         chat = await cli.get_input_entity(chat_id)
         if last_msg_id and last_msg_id != msg_id:
-            await client.delete_messages(chat, last_msg_id)
-        last_msg_id = msg_id
+            last_chat = await cli.get_input_entity(last_chat_id)
+            await client.delete_messages(last_chat, last_msg_id)
+        last_msg_id, last_chat_id = msg_id, chat_id
         if msg_id is None:
             continue
         try:
