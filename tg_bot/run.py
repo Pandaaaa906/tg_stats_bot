@@ -3,7 +3,7 @@ import shelve
 
 from loguru import logger
 from telethon import events, TelegramClient
-from telethon.errors import MessageIdInvalidError
+from telethon.errors import MessageIdInvalidError, MessageNotModifiedError
 from telethon.utils import get_display_name
 
 from settings import client, bot_owner
