@@ -1,6 +1,5 @@
 import asyncio
 import shelve
-from asyncio import Event
 
 from loguru import logger
 from telethon import events, TelegramClient
@@ -73,17 +72,10 @@ async def check_chat_id(event):
     )
 
 
-exit_flag: bool = False
-ready_start = Event()
-ready_start.set()
-
-
 @client.on(events.NewMessage(pattern=r'^/report_here$'))
 @logger.catch
 @white_list_user_only({bot_owner, })
 async def report_here(event):
-    global exit_flag
-    exit_flag = True
     msg = await event.reply(get_stats())
     cache['chat_id'] = event.chat_id
     cache['msg_id'] = msg.id
