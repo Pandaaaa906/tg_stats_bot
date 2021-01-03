@@ -51,13 +51,13 @@ def get_stats():
     acp_temp = temperatures.get("acpitz", [])
     memory = psutil.virtual_memory()
     cpu_str = "\n".join(f"CPU{i}: {n}%" for i, n in enumerate(cpu_percent))
-    now = datetime.today()
+    now = datetime.now().astimezone()
     return (
         '```\n'
         f'{cpu_str}\n'
         f'Memory: {size(memory.used, system=alternative)}/{size(memory.total, system=alternative)}\n'
         f'Temperatures: \n'
         f'{" ".join(f"{x.current:.1f}℃" for x in acp_temp) or "N/A"}\n\n'
-        f'Last update: \n{now.strftime("%Y-%m-%d")}\n{now.strftime("%H:%M:%S.%f")}'
+        f'Last update: \n{now.strftime("%Y-%m-%d")}\n{now.strftime("%H:%M:%S.%f%Z")}'
         '```'
     )

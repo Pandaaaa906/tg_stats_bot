@@ -76,7 +76,7 @@ async def check_chat_id(event):
 @logger.catch
 @white_list_user_only({bot_owner, })
 async def report_here(event):
-    msg = await event.reply(get_stats())
+    msg = await event.reply("Waiting for worker")
     cache['chat_id'] = event.chat_id
     cache['msg_id'] = msg.id
     cache.sync()

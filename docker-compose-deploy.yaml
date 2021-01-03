@@ -11,3 +11,5 @@ services:
       - /www/tg_bot/db:/app/db
     command: python run.py
     restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
