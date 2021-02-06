@@ -20,7 +20,6 @@ async def container_stats(event: events.NewMessage):
     running_containers = sum((1 for container in containers if container.get('State') == 'running'))
 
     containers = sorted(containers, key=lambda x: 0 if x['State'] == 'running' else 1)
-    logger.debug(containers)
     text = '\n'.join(
         f'{";".join(container.get("Names", []))}:\n'
         f'    {container.get("State")}, {container.get("Status")}.'
