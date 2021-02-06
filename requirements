@@ -5,3 +5,4 @@ cryptg
 PySocks==1.6.7
 loguru
 psutil
+docker[tls]

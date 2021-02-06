@@ -9,6 +9,7 @@ services:
     volumes:
       - /www/tg_bot/logs:/app/logs
       - /www/tg_bot/db:/app/db
+      - /var/run/docker.sock:/var/run/docker.sock
     command: python run.py
     restart: unless-stopped
     environment:
