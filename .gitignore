@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 /.idea/
 /secret.env
-/tg_bot/session
+/tg_stats_bot/session

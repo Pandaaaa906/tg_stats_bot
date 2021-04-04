@@ -9,7 +9,7 @@ APP_NAME = getenv('APP_NAME', "TG_BOT")
 PROXY_HOST = getenv('PROXY_HOST')
 PROXY_PORT = int(getenv('PROXY_PORT'))
 
-api_id = getenv('api_id')
+api_id = int(getenv('api_id'))
 api_hash = getenv('api_hash')
 bot_token = getenv('bot_token')
 phone = getenv('phone')

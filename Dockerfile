@@ -6,7 +6,7 @@ RUN pip install -r /tmp/requirements
 
 FROM tg_bot_base
 
-COPY tg_bot /app
+COPY tg_stats_bot /app
 WORKDIR /app
 RUN mkdir -p session
 RUN mkdir -p db
