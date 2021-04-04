@@ -2,7 +2,7 @@ from loguru import logger
 from telethon import events
 from telethon.utils import get_display_name
 
-from docker_stats.plugin import container_stats
+from docker_stats.handlers import container_stats
 from general_stats.handlers import report_here
 from general_stats.tasks import refresh_stats
 from settings import client
