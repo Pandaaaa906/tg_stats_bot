@@ -6,7 +6,7 @@ from settings import bot_owner
 from telethon_utils.decorators import white_list_user_only
 
 
-@events.register(events.NewMessage(pattern=r'^/report_here$'))
+@events.register(events.NewMessage(pattern=r'^/report_here'))
 @logger.catch
 @white_list_user_only({bot_owner, })
 async def report_here(event):
